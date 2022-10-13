@@ -51,195 +51,196 @@ namespace {
         static constexpr int val = IsEmpty;
     };
 
+
+    template<typename T, typename V, int Variation>
+    class compressed_pair_val;
+
+    template<typename T, typename V>
+    class compressed_pair_val<T, V, NONE_EMPTY> {
+    public:
+        compressed_pair_val() : first_(), second_() {
+        }
+
+        template<typename First, typename Second>
+        compressed_pair_val(First &&first, Second &&second)
+                : first_(std::forward<First>(first)), second_(std::forward<Second>(second)) {
+        }
+
+        T &first() {
+            return first_;
+        }
+
+        const T &first() const {
+            return first_;
+        }
+
+        V &second() {
+            return second_;
+        }
+
+        const V &second() const {
+            return second_;
+        }
+
+    private:
+        T first_;
+        V second_;
+    };
+
+    template<typename T, typename V>
+    class compressed_pair_val<T, V, SECOND_EMPTY> : public V {
+    public:
+        compressed_pair_val() : first_(), V() {
+        }
+
+        template<typename First, typename Second>
+        compressed_pair_val(First &&first, Second &&second)
+                : first_(std::forward<First>(first)), V(std::forward<Second>(second)) {
+        }
+
+        T &first() {
+            return first_;
+        }
+
+        const T &first() const {
+            return first_;
+        }
+
+        V &second() {
+            return *this;
+        }
+
+        const V &second() const {
+            return *this;
+        }
+
+    private:
+        T first_;
+    };
+
+    template<typename T, typename V>
+    class compressed_pair_val<T, V, FIRST_EMPTY> : public T {
+    public:
+        compressed_pair_val() : T(), second_() {
+        }
+
+        template<typename First, typename Second>
+        compressed_pair_val(First &&first, Second &&second)
+                : T(std::forward<First>(first)), second_(std::forward<Second>(second)) {
+        }
+
+        T &first() {
+            return *this;
+        }
+
+        const T &first() const {
+            return *this;
+        }
+
+        V &second() {
+            return second_;
+        }
+
+        const V &second() const {
+            return second_;
+        }
+
+    private:
+        V second_;
+    };
+
+    template<typename T, typename V>
+    class compressed_pair_val<T, V, BOTH_EMPTY> : public T, public V {
+    public:
+        compressed_pair_val() : T(), V() {
+        }
+
+        template<typename First, typename Second>
+        compressed_pair_val(First &&first, Second &&second)
+                : T(std::forward<First>(first)), V(std::forward<Second>(second)) {
+        }
+
+        T &first() {
+            return *this;
+        }
+
+        const T &first() const {
+            return *this;
+        }
+
+        V &second() {
+            return *this;
+        }
+
+        const V &second() const {
+            return *this;
+        }
+    };
+
+    template<typename T, typename V>
+    class compressed_pair_val<T, V, NONE_EMPTY_EQ> {
+    public:
+        compressed_pair_val() : first_(), second_() {
+        }
+
+        template<typename First, typename Second>
+        compressed_pair_val(First &&first, Second &&second)
+                : first_(std::forward<First>(first)), second_(std::forward<Second>(second)) {
+        }
+
+        T &first() {
+            return first_;
+        }
+
+        const T &first() const {
+            return first_;
+        }
+
+        V &second() {
+            return second_;
+        }
+
+        const V &second() const {
+            return second_;
+        }
+
+    private:
+        T first_;
+        V second_;
+    };
+
+    template<typename T, typename V>
+    class compressed_pair_val<T, V, BOTH_EMPTY_EQ> : public T {
+    public:
+        compressed_pair_val() : first_(), T() {
+        }
+
+        template<typename First, typename Second>
+        compressed_pair_val(First &&first, Second &&second)
+                : first_(std::forward<First>(first)), V(std::forward<Second>(second)) {
+        }
+
+        T &first() {
+            return first_;
+        }
+
+        const T &first() const {
+            return first_;
+        }
+
+        V &second() {
+            return *this;
+        }
+
+        const V &second() const {
+            return *this;
+        }
+
+    private:
+        T first_;
+    };
+
 }
-
-template<typename T, typename V, int Variation>
-class compressed_pair_val;
-
-template<typename T, typename V>
-class compressed_pair_val<T, V, NONE_EMPTY> {
-public:
-    compressed_pair_val() : first_(), second_() {
-    }
-
-    template<typename First, typename Second>
-    compressed_pair_val(First &&first, Second &&second)
-            : first_(std::forward<First>(first)), second_(std::forward<Second>(second)) {
-    }
-
-    T &first() {
-        return first_;
-    }
-
-    const T &first() const {
-        return first_;
-    }
-
-    V &second() {
-        return second_;
-    }
-
-    const V &second() const {
-        return second_;
-    }
-
-private:
-    T first_;
-    V second_;
-};
-
-template<typename T, typename V>
-class compressed_pair_val<T, V, SECOND_EMPTY> : public V {
-public:
-    compressed_pair_val() : first_(), V() {
-    }
-
-    template<typename First, typename Second>
-    compressed_pair_val(First &&first, Second &&second)
-            : first_(std::forward<First>(first)), V(std::forward<Second>(second)) {
-    }
-
-    T &first() {
-        return first_;
-    }
-
-    const T &first() const {
-        return first_;
-    }
-
-    V &second() {
-        return *this;
-    }
-
-    const V &second() const {
-        return *this;
-    }
-
-private:
-    T first_;
-};
-
-template<typename T, typename V>
-class compressed_pair_val<T, V, FIRST_EMPTY> : public T {
-public:
-    compressed_pair_val() : T(), second_() {
-    }
-
-    template<typename First, typename Second>
-    compressed_pair_val(First &&first, Second &&second)
-            : T(std::forward<First>(first)), second_(std::forward<Second>(second)) {
-    }
-
-    T &first() {
-        return *this;
-    }
-
-    const T &first() const {
-        return *this;
-    }
-
-    V &second() {
-        return second_;
-    }
-
-    const V &second() const {
-        return second_;
-    }
-
-private:
-    V second_;
-};
-
-template<typename T, typename V>
-class compressed_pair_val<T, V, BOTH_EMPTY> : public T, public V {
-public:
-    compressed_pair_val() : T(), V() {
-    }
-
-    template<typename First, typename Second>
-    compressed_pair_val(First &&first, Second &&second)
-            : T(std::forward<First>(first)), V(std::forward<Second>(second)) {
-    }
-
-    T &first() {
-        return *this;
-    }
-
-    const T &first() const {
-        return *this;
-    }
-
-    V &second() {
-        return *this;
-    }
-
-    const V &second() const {
-        return *this;
-    }
-};
-
-template<typename T, typename V>
-class compressed_pair_val<T, V, NONE_EMPTY_EQ> {
-public:
-    compressed_pair_val() : first_(), second_() {
-    }
-
-    template<typename First, typename Second>
-    compressed_pair_val(First &&first, Second &&second)
-            : first_(std::forward<First>(first)), second_(std::forward<Second>(second)) {
-    }
-
-    T &first() {
-        return first_;
-    }
-
-    const T &first() const {
-        return first_;
-    }
-
-    V &second() {
-        return second_;
-    }
-
-    const V &second() const {
-        return second_;
-    }
-
-private:
-    T first_;
-    V second_;
-};
-
-template<typename T, typename V>
-class compressed_pair_val<T, V, BOTH_EMPTY_EQ> : public T {
-public:
-    compressed_pair_val() : first_(), T() {
-    }
-
-    template<typename First, typename Second>
-    compressed_pair_val(First &&first, Second &&second)
-            : first_(std::forward<First>(first)), V(std::forward<Second>(second)) {
-    }
-
-    T &first() {
-        return first_;
-    }
-
-    const T &first() const {
-        return first_;
-    }
-
-    V &second() {
-        return *this;
-    }
-
-    const V &second() const {
-        return *this;
-    }
-
-private:
-    T first_;
-};
 
 template<typename T, typename V>
 class compressed_pair
