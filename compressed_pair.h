@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <memory>
 
-namespace {
+namespace details {
     enum compressed_pair_type {
         BOTH_EMPTY = 0,
         FIRST_EMPTY,
@@ -239,27 +239,26 @@ namespace {
     private:
         T first_;
     };
-
 }
 
 template<typename T, typename V>
 class compressed_pair
-        : public compressed_pair_val<T, V,
-                compressed_pair_def<T, V, false, empty_def<T>::val, empty_def<V>::val>::val> {
+        : public details::compressed_pair_val<T, V,
+                details::compressed_pair_def<T, V, false, details::empty_def<T>::val, details::empty_def<V>::val>::val> {
 public:
-    using base = compressed_pair_val<T, V,
-            compressed_pair_def<T, V, false, empty_def<T>::val, empty_def<V>::val>::val>;
+    using base = details::compressed_pair_val<T, V,
+            details::compressed_pair_def<T, V, false, details::empty_def<T>::val, details::empty_def<V>::val>::val>;
     using base::base;
 };
 
 template<typename T>
 class compressed_pair<T, T>
-        : public compressed_pair_val<
-                T, T, compressed_pair_def<T, T, true,
-                        empty_def<T>::val, empty_def<T>::val>::val> {
+        : public details::compressed_pair_val<
+                T, T, details::compressed_pair_def<T, T, true,
+                        details::empty_def<T>::val, details::empty_def<T>::val>::val> {
 public:
-    using base = compressed_pair_val<
-            T, T, compressed_pair_def<T, T, true,
-                    empty_def<T>::val, empty_def<T>::val>::val>;
+    using base = details::compressed_pair_val<
+            T, T, details::compressed_pair_def<T, T, true,
+                    details::empty_def<T>::val, details::empty_def<T>::val>::val>;
     using base::base;
 };
